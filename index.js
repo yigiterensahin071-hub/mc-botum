@@ -28,11 +28,10 @@ function createBot() {
     }, 2000);
   });
 
-  // BURASI YENİ EKLENDİ - SOHBET DİNLEYİCİ
-  bot.on('message', (message) => {
+  // GÜNCELLENMİŞ SOHBET DİNLEYİCİSİ
+  bot.on('message', async (message) => {
     const msg = message.toString();
     
-    // Oyun içinden sadece içinde "Schxy" geçen cümleleri (yani seni) dikkate alır
     if (msg.includes('Schxy')) {
       if (msg.includes('!gel')) {
         bot.chat('/tpa Schxy');
@@ -43,6 +42,20 @@ function createBot() {
       }
       if (msg.includes('!kabul')) {
         bot.chat('/tpaccept');
+      }
+      if (msg.includes('!ver')) {
+        const items = bot.inventory.items();
+        if (items.length === 0) {
+          // Eğer üstünde eşya yoksa sana özelden fısıldar
+          bot.chat('/msg Schxy Ustum bombos, hicbir sey yok kanka!');
+        } else {
+          // Üstünde eşya varsa tek tek yere fırlatır
+          for (const item of items) {
+            try {
+              await bot.tossStack(item);
+            } catch (err) {}
+          }
+        }
       }
     }
   });

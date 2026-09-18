@@ -28,34 +28,31 @@ function createBot() {
     }, 2000);
   });
 
+  // İSİM KONTROLÜ KALDIRILMIŞ DİNLEYİCİ
   bot.on('message', async (message) => {
     const msg = message.toString();
     
-    if (msg.includes('Schxy')) {
-      if (msg.includes('!gel')) {
-        bot.chat('/tpa Schxy');
-      }
-      if (msg.includes('!zıpla')) {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 1500);
-      }
-      if (msg.includes('!kabul')) {
-        bot.chat('/tpaccept');
-      }
-      if (msg.includes('!ver')) {
+    if (msg.includes('!gel')) {
+      bot.chat('/tpa Schxy');
+    }
+    
+    if (msg.includes('!zıpla')) {
+      bot.setControlState('jump', true);
+      setTimeout(() => bot.setControlState('jump', false), 1500);
+    }
+    
+    if (msg.includes('!kabul')) {
+      bot.chat('/tpaccept');
+    }
+    
+    if (msg.includes('!ver')) {
+      bot.chat('Esyalar atiliyor...'); // Atmadan önce chate yazar
+      try {
         const items = bot.inventory.items();
-        if (items.length === 0) {
-          bot.chat('Ustum bombos kanka, hicbir sey yok!');
-        } else {
-          bot.chat('Uzerimde ' + items.length + ' cesit esya var, yere firlatiyorum!');
-          for (const item of items) {
-            try {
-              await bot.tossStack(item);
-            } catch (err) {}
-          }
-          bot.chat('Firlatma islemi bitti!');
+        for (const item of items) {
+          try { await bot.tossStack(item); } catch (e) {}
         }
-      }
+      } catch (err) {}
     }
   });
 

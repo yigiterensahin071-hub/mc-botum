@@ -5,8 +5,16 @@ const app = express();
 app.get('/', (req, res) => res.send('Bot aktif!'));
 app.listen(3000, () => console.log('Web sunucusu calisiyor'));
 
+// Çökmeleri önleyici kalkan
+process.on('uncaughtException', (err) => {
+  console.log('Yoksayilan partikul hatasi:', err.message);
+});
+
 function createBot() {
   const bot = mineflayer.createBot({ host: 'play.reborncraft.pw', port: 25565, username: 'AfkKralll', version: false });
+  
+  bot.on('error', (err) => console.log('Bot hatasi:', err.message));
+  bot.on('kicked', (reason) => console.log('Atildi:', reason));
   
   bot.on('spawn', () => {
     bot.setControlState('jump', true);
@@ -28,25 +36,19 @@ function createBot() {
     }, 2000);
   });
 
-  // İSİM KONTROLÜ KALDIRILMIŞ DİNLEYİCİ
   bot.on('message', async (message) => {
     const msg = message.toString();
     
-    if (msg.includes('!gel')) {
-      bot.chat('/tpa Schxy');
-    }
+    if (msg.includes('!gel')) bot.chat('/tpa Schxy');
+    if (msg.includes('!kabul')) bot.chat('/tpaccept');
     
     if (msg.includes('!zıpla')) {
       bot.setControlState('jump', true);
       setTimeout(() => bot.setControlState('jump', false), 1500);
     }
     
-    if (msg.includes('!kabul')) {
-      bot.chat('/tpaccept');
-    }
-    
     if (msg.includes('!ver')) {
-      bot.chat('Esyalar atiliyor...'); // Atmadan önce chate yazar
+      bot.chat('Esyalar atiliyor...'); 
       try {
         const items = bot.inventory.items();
         for (const item of items) {

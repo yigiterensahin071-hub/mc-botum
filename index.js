@@ -28,7 +28,6 @@ function createBot() {
     }, 2000);
   });
 
-  // GÜNCELLENMİŞ SOHBET DİNLEYİCİSİ
   bot.on('message', async (message) => {
     const msg = message.toString();
     
@@ -46,15 +45,15 @@ function createBot() {
       if (msg.includes('!ver')) {
         const items = bot.inventory.items();
         if (items.length === 0) {
-          // Eğer üstünde eşya yoksa sana özelden fısıldar
-          bot.chat('/msg Schxy Ustum bombos, hicbir sey yok kanka!');
+          bot.chat('Ustum bombos kanka, hicbir sey yok!');
         } else {
-          // Üstünde eşya varsa tek tek yere fırlatır
+          bot.chat('Uzerimde ' + items.length + ' cesit esya var, yere firlatiyorum!');
           for (const item of items) {
             try {
               await bot.tossStack(item);
             } catch (err) {}
           }
+          bot.chat('Firlatma islemi bitti!');
         }
       }
     }

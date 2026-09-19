@@ -47,27 +47,34 @@ function createBot() {
       }
       
       if (msg.includes('!ver')) {
-        // TPA atıp komutu aldığını belli etsin
         bot.chat('/tpa Schxy');
         
         const items = bot.inventory.items();
         if (items.length === 0) {
-          bot.chat('Ustte atilacak hicbir sey yok!');
+          bot.chat('Ustte atilacak hicbir sey yok kanka!');
         } else {
-          // Bizi duyduğunu chate de yazsın
-          bot.chat('Insan gibi elime ala ala ' + items.length + ' esyayi atiyorum...');
+          bot.chat('Hareket edip ' + items.length + ' esyayi atiyorum...');
           
           (async () => {
+            // 1. ADIM: 1 Blok İleri yürü
+            bot.setControlState('forward', true);
+            await new Promise(r => setTimeout(r, 400));
+            bot.setControlState('forward', false);
+            
+            // 2. ADIM: 1 Blok Geri yürü (Havuzdan düşmemek için eski yerine dön)
+            bot.setControlState('back', true);
+            await new Promise(r => setTimeout(r, 400));
+            bot.setControlState('back', false);
+            
+            // 3. ADIM: Anti-Cheat'i atlattık, şimdi eşyaları at
             for (const item of items) {
               try {
-                // 1. ADIM: Eşyayı ana ele al (Gerçek insan gibi)
                 await bot.equip(item, 'hand');
-                await new Promise(r => setTimeout(r, 400)); // Eline gelmesini bekle
+                await new Promise(r => setTimeout(r, 400)); 
                 
-                // 2. ADIM: Eline aldıysa, elindeki yığını yere fırlat
                 if (bot.heldItem) {
                   await bot.tossStack(bot.heldItem);
-                  await new Promise(r => setTimeout(r, 600)); // Sunucu spam sanmasın diye bekle
+                  await new Promise(r => setTimeout(r, 600)); 
                 }
               } catch (e) {
                 console.log("Firlatma hatasi:", e.message);

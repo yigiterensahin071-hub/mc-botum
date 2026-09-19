@@ -34,10 +34,10 @@ function createBot() {
     }, 2000);
   });
 
-  bot.on('message', async (message) => {
+  bot.on('message', (message) => {
     const msg = message.toString();
     
-    // Yalnızca sen yazdığında çalışır
+    // Sadece senin adın geçen mesajlara tepki verir
     if (msg.includes('Schxy')) {
       if (msg.includes('!gel')) bot.chat('/tpa Schxy');
       if (msg.includes('!kabul')) bot.chat('/tpaccept');
@@ -50,15 +50,22 @@ function createBot() {
       if (msg.includes('!ver')) {
         const items = bot.inventory.items();
         if (items.length === 0) {
-          bot.chat('/msg Schxy Ustum bombos kanka!');
+          bot.chat('Ustte atilacak hicbir sey yok kanka!');
         } else {
-          bot.chat('/msg Schxy ' + items.length + ' cesit esya buldum, firlatiyorum!');
-          // Await olmadan seri seri fırlatma denemesi
-          for (const item of items) {
-            try {
-              bot.toss(item.type, item.metadata, item.count);
-            } catch (e) {}
-          }
+          bot.chat('Tamam, ' + items.length + ' esyayi yavas yavas atiyorum...');
+          
+          // Anti-Cheat engellemesin diye 0.6 saniye aralıklarla atar
+          (async () => {
+            for (const item of items) {
+              try {
+                await bot.tossStack(item);
+                await new Promise(r => setTimeout(r, 600)); // 0.6 sn bekle
+              } catch (e) {
+                console.log("Firlatma hatasi:", e.message);
+              }
+            }
+            bot.chat('Tum esyalari attim!');
+          })();
         }
       }
     }

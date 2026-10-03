@@ -28,34 +28,27 @@ function createBot(hesap) {
   bot.on('kicked', (reason) => console.log(`[${hesap.username}] ATILDI:`, JSON.stringify(reason)));
   
   bot.on('spawn', () => {
-    // Sadece ilk girişte şifre gir, sunucu değiştirince (skyblock) tekrar şifre yazmaya çalışma
     if (isLogged) return; 
     isLogged = true;
     
-    console.log(`[${hesap.username}] Sunucuya katildi, sifre girilecek...`);
-    
-    bot.setControlState('jump', true);
-    setTimeout(() => bot.setControlState('jump', false), 500);
+    console.log(`[${hesap.username}] Sunucuya katildi, bekliyor...`);
     
     setTimeout(() => {
       bot.chat('/login ' + hesap.pass);
-      console.log(`[${hesap.username}] Sifre yazildi. Skyblock'a gecilmesi bekleniyor...`);
+      console.log(`[${hesap.username}] Sifre yazildi. Skyblock'a geciliyor...`);
       
-      // Lag ihtimaline karşı süreyi 3 saniyeden 5 saniyeye çıkardık
       setTimeout(() => {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 500);
+        // Zıplama KESİNLİKLE YOK! Put gibi durup komut atıyor:
         bot.chat('/skyblock');
         console.log(`[${hesap.username}] /skyblock komutu atildi.`);
         
         setTimeout(() => {
-          bot.setControlState('jump', true);
-          setTimeout(() => bot.setControlState('jump', false), 500);
           bot.chat('/tpa Schxy'); 
           console.log(`[${hesap.username}] TPA istegi gonderildi.`);
-        }, 10000); // TPA süresi de uzatıldı ki ada iyice yüklensin
-      }, 5000);
-    }, 2000);
+        }, 10000); // 10 saniye skyblock'a bağlanmasını bekler
+        
+      }, 5000); // Şifre girdikten sonra 5 sn bekler
+    }, 3000); // Oyuna girince 3 sn bekler
   });
 
   bot.on('message', (message) => {
@@ -78,7 +71,6 @@ function createBot(hesap) {
   bot.on('end', () => setTimeout(() => createBot(hesap), 15000));
 }
 
-// 2. Botu 10 saniye arayla sokuyoruz ki anti-bot'a takılmasın
 hesaplar.forEach((hesap, index) => {
   setTimeout(() => {
     console.log(`[BAŞLATILIYOR] ${hesap.username} oyuna sokuluyor...`);

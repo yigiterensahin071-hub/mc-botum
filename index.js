@@ -20,11 +20,11 @@ function createBot(hesap) {
     host: 'play.reborncraft.pw', 
     port: 25565, 
     username: hesap.username, 
-    version: false 
+    version: '1.16.5' // <-- Sürüm sabitlendi, particle çökmesi önlendi
   });
   
   bot.on('error', (err) => console.log(`[${hesap.username}] Bot hatasi:`, err.message));
-  bot.on('kicked', (reason) => console.log(`[${hesap.username}] Atildi:`, reason));
+  bot.on('kicked', (reason) => console.log(`[${hesap.username}] Atildi:`, JSON.stringify(reason)));
   
   bot.on('spawn', () => {
     console.log(`[${hesap.username}] Sunucuya katildi!`);

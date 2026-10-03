@@ -21,7 +21,7 @@ for (const fn of ['log', 'warn']) {
 // --- AYARLAR ---
 const HOST = 'play.reborncraft.pw';
 const PORT = 25565;
-const VERSION = '1.16.5';
+const VERSION = '1.21.8';              // Skyblock sunuculari minimum 1.21.6 istiyor
 const OWNERS = ['Schxy', 'aForse'];      // !gel diyebilecek kisiler
 const FIRST_TPA_TARGET = 'Schxy';        // oyuna girince ilk TPA atilacak kisi
 
@@ -62,12 +62,20 @@ function createBot(hesap) {
     try { bot.chat(text); } catch (e) { log('chat hatasi:', e.message); }
   };
 
-  const bot = mineflayer.createBot({
+  const botOptions = {
     host: HOST,
     port: PORT,
     username: hesap.username,
-    version: VERSION
-  });
+    hideErrors: true            // okunamayan paketlerde (particle vs.) cokmesin
+  };
+  let bot;
+  try {
+    bot = mineflayer.createBot({ ...botOptions, version: VERSION });
+  } catch (e) {
+    // Kurulu mineflayer bu surumu bilmiyorsa otomatik surum tespiti
+    log(`Surum ${VERSION} kullanilamadi (${e.message}), otomatik surum deneniyor...`);
+    bot = mineflayer.createBot({ ...botOptions, version: false });
+  }
 
   bot.on('error', (err) => log('HATA:', err.message));
 
@@ -145,7 +153,7 @@ function createBot(hesap) {
     const lower = msg.toLowerCase();
 
     // Kurulum asamasinda sunucu mesajlarini logla (sorun tespiti icin)
-    if (state !== 'ready' && msg.trim()) log('SUNUCU:', msg.trim().slice(0, 150));
+    if (state !== 'ready' && msg.trim() && !msg.includes('[F] Tuşu')) log('SUNUCU:', msg.trim().slice(0, 150));
 
     // Sunucu bizden kayit / giris istiyorsa
     if (!authDone || state === 'auth') {
